@@ -1,0 +1,60 @@
+{% extends "directory/header.html" %}
+{% block content %}
+    <!-- Content Area -->
+   <main>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-2">
+                <!-- Placeholder for left advertisement -->
+                Advertisement Left
+            </div>
+            <div class="col-md-8">
+                <h2 class="text-center">Directory List</h2>
+                <!-- List of Directory Entries -->
+                <ul class="list-unstyled">
+                    {% for directory in directories %}
+                    <li class="media  rounded p-2">
+                        <div class="container">
+                            <div class="row border rounded p-1">
+                                <div class="col-md-3 left parent">
+                                    <img src=/media/{{ directory.image_url }} alt="{{ directory.domain }}" class="img-thumbnail centered-image" style="width: 150px; height: 150px;">
+                                </div>
+                                <div class="col-md-9  right">
+                                    <h4><a href={{ directory.domain }}>{{ directory.domain }} <i class="fa fa-external-link" aria-hidden="true"></i> </a></span></h4>
+                                    <span class="badge badge-dark">{{ directory.category }}</span>
+                                    <p class="mb-0"><b>{{ directory.title|truncatechars:50 }}</b></p>
+                                    <p>{{ directory.description|truncatechars:270 }}</p>
+                                    <button type="button"  class="custom-button btn btn-warning">
+                                    DA:  <span class="badge badge-light">{{ directory.da }}</span>
+                                    </button>
+                                    <button type="button"  class="custom-button btn btn-warning">
+                                    Moz Rank:  <span class="badge badge-light">{{ directory.moz_rank }}</span>
+                                    </button>
+                                    <button type="button"  class="custom-button btn btn-warning">
+                                    SEMrush Rank:  <span class="badge badge-light">{{ directory.semrush_rank }}</span>
+                                    </button>
+                                    <button type="button"  class="custom-button btn btn-warning mt-2">
+                                    Instagram Followers:  <span class="badge badge-light">{{ directory.facebook_like|floatformat:0 }}</span>
+                                    </button>
+                                     <button type="button"  class="custom-button btn btn-warning mt-2">
+                                    Website Value:  <span class="badge badge-light">${{ directory.facebook_like|floatformat:0 }}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </li>
+                    <!-- Add more list items if necessary -->
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-2">
+                <!-- Placeholder for right advertisement -->
+                Advertisement Right
+            </div>
+        </div>
+    </div>
+</main>
+
+
+{% endblock content %}
