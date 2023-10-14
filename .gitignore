@@ -2,3 +2,6 @@
 /venv
 .env
 /env
+# Ignore the virtual environment directories
+venv/
+env/
