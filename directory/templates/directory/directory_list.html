@@ -1,0 +1,110 @@
+{% extends "directory/header.html" %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 left-sticky-side">
+                <div class="side-content">
+                    <!-- Left side content goes here -->
+                    Advertisement Left Side
+                </div>
+            </div>
+            <div class="col-md-8 center-div">
+               {% if request.path == '/' %}
+   {% include 'directory/home_page_content.html' %}
+{% endif %}
+
+
+                <!-- Centered content goes here -->
+                {% if search %}
+                <h2 class="mt-3">Similar to "https://{{search}}" websites list:</h2>
+            {% else %}
+                <h2 class="text-center">{% if worth %}Top {% else %} Latest {% endif %} websites list</h2>
+            {% endif %}
+
+         
+
+                <!-- List of Directory Entries -->
+                <ul class="list-unstyled">
+                {% if directories %}
+                    {% for directory in directories %}  
+                    <li class="media rounded">
+                        <div class="container">
+                            <div class="row border justify-content-between rounded">
+                                <div class="col-md-3 left parent">
+                                    <img src=http://127.0.0.1:8000/{{ directory.image_url }} alt="{{ directory.domain }}" class="img-thumbnail centered-image" style="width: 267px; height: 200px;">
+                                </div>
+                                <div class="col-md-9 right p-2">
+                                    <h4><a href={% url 'website-detail' directory.slug %}>{{ directory.domain }} <i class="fa fa-external-link"></i> </a></span></h4>
+                                    <span class="badge badge-dark">{{ directory.category }}</span>
+                                    <p class="mb-0"><b>{{ directory.title|truncatechars:50 }}</b></p>
+                                    <p>{{ directory.description|truncatechars:270 }}</p>
+                                    <div class="mb-1">
+                                    <button type="button"  class="custom-button mt-1 btn btn-warning">
+                                    DA:  <span class="badge badge-light">{% if directory.da > 0 %}{{ directory.da }}{% else %} N/A {% endif %}</span>
+                                    </button>
+                                    <button type="button"  class="custom-button mt-1 btn btn-warning">
+                                    Moz Rank:  <span class="badge badge-light">{% if directory.moz_rank > 0 %}{{ directory.moz_rank }}{% else %} N/A {% endif %}</span>
+                                    </button>
+                                    <button type="button"  class="custom-button mt-1 btn btn-warning">
+                                    Global Rank:  <span class="badge badge-light">{% if directory.semrush_rank > 0 %}{{ directory.semrush_rank }}{% else %} N/A {% endif %}</span>
+                                    </button>
+                                    <button type="button"  class="custom-button mt-1 btn btn-warning">
+                                    Insta Followers:  <span class="badge badge-light">{% if directory.facebook_like > 0 %}{{ directory.facebook_like|floatformat:0 }}{% else %} N/A {% endif %}</span>
+                                    </button>
+                                     <button type="button"  class="custom-button mt-1 btn btn-warning">
+                                    Value:  <span class="badge badge-light">{% if directory.facebook_like > 0 %}${{ directory.facebook_like|floatformat:0 }}{% else %} N/A {% endif %}</span>
+                                    </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </li>
+                    <!-- Add more list items if necessary -->
+                    {% endfor %}
+                </ul>
+            {% else %}
+            <h2 class="text-center mt-5 text-muted pt-5" >No any similar websites found in directory.</h2>
+            {% endif %}
+            </div>
+            <div class="col-md-2 right-sticky-side">
+                <div class="side-content">
+                    <!-- Right side content goes here -->
+                    Advertisement Right Side
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="row justify-content-center">
+{% include "directory/pagination.html" %}
+</div>
+
+   <script>
+    $(document).ready(function () {
+        var leftsideDivs = $('.left-sticky-side');
+        var rightsideDivs = $('.right-sticky-side');
+        var centered_content = $('.center-div');
+        
+        var offsetTop = leftsideDivs.offset().top;
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() > offsetTop) {
+                leftsideDivs.addClass('sticky-left');
+                leftsideDivs.addClass('sticky');
+                rightsideDivs.addClass('sticky');
+                rightsideDivs.addClass('sticky-right');
+                centered_content.addClass('centered-content');
+
+            } else {
+                leftsideDivs.removeClass('sticky-left');
+                rightsideDivs.removeClass('sticky-right');
+                leftsideDivs.removeClass('sticky');
+                rightsideDivs.removeClass('sticky');
+                centered_content.removeClass('centered-content');
+
+            }
+        });
+    });
+</script>
+
+{% endblock content %}

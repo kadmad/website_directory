@@ -1,0 +1,62 @@
+{% extends "directory/header.html" %}
+
+
+{% block content %}
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 left-sticky-side">
+                <div class="side-content">
+                    <!-- Left side content goes here -->
+                    Advertisement Left Side
+                </div>
+            </div>
+         <div class="col-md-8">
+            <h2 class="">Submit your websit below:</h2>
+            <div class="row p-3">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            </div>
+        </div>
+            <div class="col-md-2 right-sticky-side">
+                <div class="side-content">
+                    <!-- Right side content goes here -->
+                    Advertisement Right Side
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+   <script>
+    $(document).ready(function () {
+        var leftsideDivs = $('.left-sticky-side');
+        var rightsideDivs = $('.right-sticky-side');
+        var centered_content = $('.center-div');
+        
+        var offsetTop = leftsideDivs.offset().top;
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() > offsetTop) {
+                leftsideDivs.addClass('sticky-left');
+                leftsideDivs.addClass('sticky');
+                rightsideDivs.addClass('sticky');
+                rightsideDivs.addClass('sticky-right');
+                centered_content.addClass('centered-content');
+
+            } else {
+                leftsideDivs.removeClass('sticky-left');
+                rightsideDivs.removeClass('sticky-right');
+                leftsideDivs.removeClass('sticky');
+                rightsideDivs.removeClass('sticky');
+                centered_content.removeClass('centered-content');
+
+            }
+        });
+    });
+</script>
+
+
+{% endblock content %}

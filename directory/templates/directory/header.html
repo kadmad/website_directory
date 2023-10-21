@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MirrorSiteLike</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+
+    .parent {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 300px;
+        border-right: 2px solid #ccc;
+    }
+ body {
+        background-color: #fff; /* Set the background color of the body */
+    }
+
+    .sticky-side {
+        position: relative;
+    }
+
+    .side-content {
+        background-color: #ccc; /* Set the background color of the side divs to grey */
+    }
+
+
+    .sticky-left.sticky {
+        position: fixed;
+        top: 0;
+        height:auto;
+
+    }
+    .sticky-right.sticky {
+        position: fixed;
+        right:0;
+        top: 0;
+    }   
+
+    .centered-content {
+            background-color: #fff;
+            margin-left: 16rem; /* Adjust this value based on the width of your side div */
+            position: relative;
+
+        }
+
+ /* Custom CSS for navigation bar */
+        .menu-bar {
+            background-color: #f0f0f0; /* Default background color (slight grey) */
+        }
+        
+        .menu-bar .nav-item a.nav-link {
+            color: #000; /* Default font color (black) */
+            transition: background-color 0.3s ease; /* Add a transition for smooth color change */
+        }
+        
+        .menu-bar .nav-item a.nav-link:hover {
+            color: #fff; /* Font color on hover (white) */
+            background-color: rgba(51, 51, 51, 0.8); /* Background color on hover (dark black) */
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="main">
+            <!-- Navigation-->
+        <div class="row mb-4 menu-bar">
+        <div class="col-2 px-5 px-lg-5 py-1">
+            <a class="navbar-brand" href="{% url 'website-list' %}">Mirror SiteLike</a>
+        </div>
+        <div class="col-6">
+            <nav class="navbar navbar-expand-lg py-1 navbar-danger" id="mainNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link px-lg-3" href="{% url 'top-website-list' %}">Top Websites</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-lg-3" href="{% url 'latest-website-list' %}">Latest Sites</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-lg-3" href="{% url 'website-create' %}">Add/Update Your WebSite</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-lg-3" href="{% url 'removal-create' %}">Removal Request</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="col-4  py-lg-2">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                        <span class="input-group-text">https://</span>
+                        </div>
+                        <form action="{% url 'website-list' %}" method="get">
+                        <div class="input-group-append">
+                        <input type="text" name="search" class="form-control" {% if search %} value={{search}} {% endif %}placeholder="search-similar-websites">
+                        <button class="btn btn-secondary" type="submit" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+     <!-- Include Bootstrap JS and jQuery (if needed) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% block content %}
+
+
+    {% endblock content %}
+    {% block outro_content %}
+    
+        <div class="row">
+    <div class="col-md-7 p-1 mx-auto mt-3 mb-3" style="border: 2px dashed black;">
+    {% include 'directory/outro_content.html' %}
+    {% endblock outro_content %}
+    </div>
+    </div>
+</body>
+</html>
