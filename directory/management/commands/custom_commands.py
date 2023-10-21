@@ -18,7 +18,7 @@ class Command(BaseCommand):
         headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
         }
-        for j in range(1,2):
+        for j in range(17,101):
             print(f"------------------------Page NO. {j} -------------------------------")
             response = requests.get(f"https://www.sitelike.org/top-websites.aspx?p={j}", headers=headers)
             if response.status_code == 200:
@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 site_info = []
                 try:
                     # Loop through the IDs (0 to 99)
-                    for i in range(98, 100):  # IDs from 0 to 99
+                    for i in range(91, 100):  # IDs from 0 to 99
                         print(f"------------------------Website No. {(j-1)*100 + i+1} -------------------------------")
 
                         # Construct IDs for other elements
