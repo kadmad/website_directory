@@ -3,6 +3,12 @@ from django.urls import path
 from django.contrib import admin
 from directory.views import DirectoryListView, DirectoryDetailView, DirectoryCreateView, DirectoryUpdateView, DirectoryDeleteView, RemovalRequestCreateView, TopDirectoryListView
 from django.conf.urls.static import static
+from django.contrib.sitemaps import views as sitemap_views
+from directory.utils import DirectorySitemap
+
+sitemaps = {
+    'directory': DirectorySitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -14,6 +20,7 @@ urlpatterns = [
     path('websites/<slug:slug>/', DirectoryDetailView.as_view(), name='website-detail'),
     path('websites/<int:pk>/update/', DirectoryUpdateView.as_view(), name='website-update'),
     path('websites/<int:pk>/delete/', DirectoryDeleteView.as_view(), name='website-delete'),
+    path('sitemap.xml', sitemap_views.sitemap, {'sitemaps': sitemaps}, name='sitemap'),
 
 ]
 

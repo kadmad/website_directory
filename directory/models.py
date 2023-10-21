@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from directory.base_models import TimestampedModel
 from django.utils.text import slugify
 
@@ -50,3 +51,6 @@ class Directory(TimestampedModel):
         if not self.slug:
             self.slug = self.domain.replace('.', '_')
         super(Directory, self).save(*args, **kwargs)
+    
+    def get_absolute_url(self):
+        return reverse('website-detail', args=[str(self.slug)])     

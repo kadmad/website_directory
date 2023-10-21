@@ -8,13 +8,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from directory.forms import DirectoryForm
 from directory.models import Directory
 from django.urls import reverse_lazy
-import re
-from bs4 import BeautifulSoup
-from django.conf import settings
-import requests
-import os
-from directory.utils import capture_website_screenshot, fetch_live_domain_data
-import django
+from directory.utils import fetch_live_domain_data, fetch_site_like_data
 from django.db.models import Q
 from django.contrib import messages
 from django.db import transaction
@@ -28,7 +22,7 @@ class DirectoryListView(ListView):
     paginate_by = 10  # Number of items to display per page
     def get_queryset(self):
         search = self.request.GET.get("search")
-        queryset = super().get_queryset()  # Use the base queryset
+        queryset = super().get_queryset()
         if search:
             queryset = queryset.filter(Q(domain__icontains=search) | Q(title__icontains=search) | Q(description__icontains=search))
         return queryset
@@ -57,12 +51,9 @@ class DirectoryDetailView(DetailView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         slug = self.kwargs.get("slug")
-        print('slug: ', slug)
-        related_directories = Directory.objects.filter(Q(domain__icontains=slug[:3]) | Q(title__icontains=slug[:3]) | Q(description__icontains=slug[:3])).exclude(slug=slug).distinct("id")[:10]
-        if related_directories.count() < 3:
-            related_directories = Directory.objects.filter(Q(domain__icontains=slug[:2]) | Q(title__icontains=slug[:2]) | Q(description__icontains=slug[:2])).exclude(slug=slug).distinct("id")[:10]
-        if related_directories.count() < 3:
-            related_directories = Directory.objects.filter(Q(domain__icontains=slug[:1]) | Q(title__icontains=slug[:1]) | Q(description__icontains=slug[:1])).exclude(slug=slug).distinct("id")[:10]
+        related_directories = Directory.objects.filter(
+            Q(domain__icontains=slug[:3]) | Q(title__icontains=slug[:3]) | Q(description__icontains=slug[:3])
+        ).exclude(slug=slug).distinct("id")[:10]
         context["related_directories"] = related_directories
         return context
 
@@ -75,9 +66,7 @@ class DirectoryCreateView(CreateView):
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         with transaction.atomic():
             obj = form.save()
-            print('obj: ', obj)
-            updated_obj = fetch_live_domain_data(obj, f"https://{obj.domain}")
-            print('updated_obj: ', updated_obj)
+            obj = fetch_site_like_data(obj)
             return super().form_valid(form)     
 
     def form_invalid(self, form: BaseModelForm) -> HttpResponse:

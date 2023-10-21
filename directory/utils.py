@@ -1,5 +1,7 @@
 import io
 import os
+import random
+import re
 from bs4 import BeautifulSoup
 import requests
 from selenium import webdriver
@@ -7,6 +9,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageFont
 import hashlib
 from selenium import webdriver
 from directory.models import Directory
+import xml.etree.ElementTree as ET
 
 def capture_website_screenshot(url):
     # Extract the domain name from the URL
@@ -45,12 +48,10 @@ def capture_website_screenshot(url):
 
         # Take a screenshot
         driver.save_screenshot(screenshot_filename)
-        print('screenshot_filename: ', screenshot_filename)
 
         # Open the screenshot with Pillow
         img = Image.open(screenshot_filename)
         draw = ImageDraw.Draw(img)
-        print('img: ', img)
         font_size = 72
         font = ImageFont.truetype("arial.ttf", font_size)
             
@@ -135,9 +136,7 @@ def erase_portion(image, output_path, erase_percentage_height, erase_percentage_
 
     # Calculate the dimensions of the portion to erase
     erase_width = int(width * erase_percentage_width / 100)
-    print('erase_width: ', erase_width)
     erase_height = int(height * erase_percentage_height / 100)
-    print('erase_height: ', erase_height)
 
     # Create a white rectangle to cover the specified portion
     white = (255, 255, 255)
@@ -160,7 +159,6 @@ def erase_portion(image, output_path, erase_percentage_height, erase_percentage_
     draw.text(text_position, text, font=font, fill=text_color)
     # Save the modified image to the output path
     image.save(f"{output_path}")
-    image.show()
     return output_path
 
     
@@ -188,10 +186,8 @@ def download_and_save_image(url, domain):
                 os.makedirs(base_file_path, exist_ok=True)
                 file_path = erase_portion(remote_image, os.path.join(base_file_path, f"{domain.split('.')[0]}_small.webp"), 10, 25)
 
-                print(f"Image downloaded and saved to {file_path}")
                 return file_path
             else:
-                print("it's sitelike image which we are not going to store")
                 return os.path.join(base_file_path, "default_site_image_thumbnail.webp")
         else:
             print(f"Failed to download the image. Status code: {response.status_code}")
@@ -209,9 +205,7 @@ def check_domain_live(url):
     
 def fetch_live_domain_data(obj: Directory, url):
     """Fetching a live domain data"""
-    print('obj: ', obj)
     response = requests.get(url)
-    print('response: ', response)
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
         # Parse the HTML content with BeautifulSoup
@@ -232,13 +226,6 @@ def fetch_live_domain_data(obj: Directory, url):
         file_path = capture_website_screenshot(url=url)
         # file_path = os.path.join("media/snaps", file_name)
         # Print the extracted information
-        print({
-        "title": title,
-        "description": description,
-        "category": category,
-        "image_url":file_path,
-        })
-        print('Directory.objects.filter(id=obj.id): ', Directory.objects.filter(id=obj.id))
         obj.title = title
         obj.description = description
         obj.category = category
@@ -248,3 +235,102 @@ def fetch_live_domain_data(obj: Directory, url):
 
     else:
         print(f"Failed to fetch the page. Status code: {response.status_code}")
+
+from django.contrib.sitemaps import Sitemap
+from directory.models import Directory
+
+class DirectorySitemap(Sitemap):
+    changefreq = 'daily'  # Set your preferred change frequency.
+    priority = 1  # Set your preferred priority.
+
+    def items(self):
+        return Directory.objects.all()  # Adjust your queryset.
+
+    def lastmod(self, obj):
+        return obj.updated_at  # Use the last modified date of your blog post.
+
+    def location(self, obj):
+        return obj.get_absolute_url()  # Define a method to get the URL for each blog post.
+
+    def image(self, obj):
+        if obj.image:  # Check if there is an image associated with the blog post.
+            return {
+                'loc': obj.image_url,
+                'title': obj.title,
+            }
+        else:
+            return None
+
+def fetch_site_like_data(directory: Directory):
+    """Fetch website worth, followers and rank related data from sitelike"""
+    headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+        }
+
+    response = requests.get(f"https://www.sitelike.org/similar/{directory.domain}/", headers=headers)
+    if response.status_code == 200:
+        page_content = response.content
+        soup = BeautifulSoup(page_content, 'html.parser')
+        try:
+            # Construct IDs for other elements
+            description_element_id = f"MainContent_lblDescription"
+            # title_element_id = f"MainContent_dl_lblDescription"
+            file_path = f""
+            # image_url_id = f"MainContent_dl_lblImage_{i}"
+            moz_da_id = f"MainContent_lblMozDA"
+            moz_rank_id = f"MainContent_lblMozRank"
+            semrush_rank_title = f"Semrush Rank"
+            worth_id = f"MainContent_dl_lblWorth"
+            facebook_likes_id = f"MainContent_lblFacebookLikes"
+
+            # Extract information for other elements
+            # title = soup.find('span', {'id': title_element_id}).text.strip()
+            # Check if the description element was found
+            # Check if the description element was found
+            site_description_element = soup.find('span', {'id': description_element_id})
+            if site_description_element:
+                site_description = site_description_element.text.strip()
+            moz_da = 0
+            moz_rank = 0
+            semrush_rank = 0
+            worth = 0
+            facebook_likes = 0
+            if soup.find('span', {'id': moz_da_id}):
+                moz_da = soup.find('span', {'id': moz_da_id}).text.strip()
+                moz_da = re.sub(r'[^0-9]', '', moz_da)
+            if soup.find('span', {'id': moz_rank_id}):
+                moz_rank = soup.find('span', {'id': moz_rank_id}).text.strip()
+                moz_rank = re.sub(r'[^0-9]', '', moz_rank)
+
+            if soup.find('span', {'title': semrush_rank_title}):
+                semrush_rank = soup.find('span', {'title': semrush_rank_title}).text.strip()
+                semrush_rank = re.sub(r'[^0-9]', '', semrush_rank)
+
+            if soup.find('span', {'id': worth_id}):
+                worth = soup.find('span', {'id': worth_id}).text.strip()
+                worth = re.sub(r'[^0-9]', '', worth)
+
+            if soup.find('span', {'id': facebook_likes_id}):
+                facebook_likes = soup.find('span', {'id': facebook_likes_id}).text.strip()
+                facebook_likes = re.sub(r'[^0-9]', '', facebook_likes)
+
+            img_element = soup.find('img', {'id': "imgSiteThumb"})
+            if img_element:
+                src_url = img_element.get('src')
+                file_path = download_and_save_image(src_url, directory.domain)
+            else:
+                directory = fetch_live_domain_data(directory, f"https://{directory.domain}")
+
+            magical_worth = (int(facebook_likes) * random.randint(100,120))
+            
+            directory.description = site_description
+            directory.image_url = file_path
+            directory.da = moz_da
+            directory.moz_rank = moz_rank
+            directory.semrush_rank = semrush_rank
+            directory.facebook_like = facebook_likes
+            directory.worth = magical_worth
+            directory.save()
+                
+        except Exception as e:
+            print("exceptioin", e)

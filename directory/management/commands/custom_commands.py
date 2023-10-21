@@ -142,7 +142,6 @@ class Command(BaseCommand):
                                 "worth": worth,
                                 "facebook_like": facebook_likes,
                             })
-                            print("----------updated------------")
 
                  
                 except Exception as e:

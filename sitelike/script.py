@@ -17,11 +17,7 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
 }
 response = requests.get("https://www.sitelike.org/top-websites.aspx", headers=headers)
-import sys
-print(sys.executable)
-print(Directory.objects.all())
 
-# print('response: ', response.text)
 if response.status_code == 200:
     page_content = response.content
     soup = BeautifulSoup(page_content, 'html.parser')
@@ -64,12 +60,9 @@ if response.status_code == 200:
             if anchor_tag:
                 # Get the URL from the href attribute
                 anchor_url = anchor_tag.get('href')
-                print('anchor_url: ', anchor_url)
                 domain = anchor_url.split("/")[-2].strip()
-                print('domain: ', domain)
                 try:
                     file_path = capture_website_screenshot(f"https://{domain}")
-                    print('file_path: ', file_path)
                 except:
                     file_path = ""
         moz_da = 0
@@ -96,18 +89,7 @@ if response.status_code == 200:
             facebook_likes = soup.find('span', {'id': facebook_likes_id}).text.strip()
             facebook_likes = re.sub(r'[^0-9]', '', facebook_likes)
 
-            
-        print({
-            "description": site_description,
-            "title": title,
-            "domain": domain,
-            "image_url": file_path,
-            "moz_da": moz_da,
-            "moz_rank": moz_rank,
-            "semrush_rank": semrush_rank,
-            "worth": worth,
-            "facebook_likes": facebook_likes,
-        })
+       
         # Append the extracted information to the site_info list as a dictionary
         site_info.append({
             "description": site_description,
