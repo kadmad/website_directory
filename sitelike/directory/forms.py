@@ -1,7 +1,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout
-from .models import Directory
+from .models import Directory, Comment
 
 class DirectoryForm(forms.ModelForm):
     class Meta:
@@ -11,3 +11,9 @@ class DirectoryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['domain'].label = "Website"
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['name', 'email', 'content']

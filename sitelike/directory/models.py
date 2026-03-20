@@ -42,4 +42,18 @@ class Directory(TimestampedModel):
     def __str__(self):
         return self.domain
     class Meta:
-        app_label = 'directory' 
+        app_label = 'directory'
+
+
+class Comment(TimestampedModel):
+    directory = models.ForeignKey(Directory, on_delete=models.CASCADE, related_name='comments')
+    name = models.CharField(max_length=100)
+    email = models.EmailField(blank=True)
+    content = models.TextField()
+
+    def __str__(self):
+        return f"{self.name} on {self.directory.domain}"
+
+    class Meta:
+        app_label = 'directory'
+        ordering = ['-created_at']

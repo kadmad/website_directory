@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from crispy_forms.utils import render_crispy_form
-from directory.forms import DirectoryForm
-from directory.models import Directory
+from directory.forms import DirectoryForm, CommentForm
+from directory.models import Directory, Comment
 from django.urls import reverse_lazy
 import re
 from bs4 import BeautifulSoup
@@ -27,10 +27,27 @@ class TopDirectoryListView(ListView):
     context_object_name = 'directories'
     queryset = Directory.objects.all().order_by("semrush_rank")   
 
-class DirectoryDetailView(DetailView):
-    model = Directory
-    template_name = 'directory/directory_detail.html'
-    context_object_name = 'directory'
+class DirectoryDetailView(View):
+    def get(self, request, pk):
+        directory = get_object_or_404(Directory, pk=pk)
+        comments = directory.comments.all()
+        form = CommentForm()
+        return render(request, 'directory/directory_detail.html', {
+            'directory': directory, 'comments': comments, 'form': form
+        })
+
+    def post(self, request, pk):
+        directory = get_object_or_404(Directory, pk=pk)
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.directory = directory
+            comment.save()
+            return redirect('website-detail', pk=pk)
+        comments = directory.comments.all()
+        return render(request, 'directory/directory_detail.html', {
+            'directory': directory, 'comments': comments, 'form': form
+        })
 
 class DirectoryCreateView(CreateView):
     model = Directory
