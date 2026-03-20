@@ -5,3 +5,5 @@
 # Ignore the virtual environment directories
 venv/
 env/
+.log
+.pyc

@@ -1,0 +1,259 @@
+{% extends "directory/header.html" %}
+{% block content %}
+<style>
+  .metric-badge {
+    display: inline-block;
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 4px 4px 4px 0;
+  }
+  .metric-badge span {
+    background-color: #ffc107;
+    color: #000;
+    border-radius: 3px;
+    padding: 2px 6px;
+    margin-left: 4px;
+  }
+  .comment-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #FF6B00;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .comment-card {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 14px;
+    background: #fff;
+  }
+  .comment-meta {
+    font-size: 0.82rem;
+    color: #6c757d;
+  }
+  .btn-post-comment {
+    background-color: #FF6B00;
+    color: #fff;
+    font-weight: bold;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .btn-post-comment:hover {
+    background-color: #e05e00;
+    color: #fff;
+  }
+  .section-divider {
+    border-top: 2px solid #e9ecef;
+    margin: 32px 0 20px;
+  }
+  .screenshot-container {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #f8f9fa;
+  }
+  .screenshot-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .screenshot-placeholder {
+    width: 100%;
+    height: 200px;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  .category-badge {
+    background-color: #343a40;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+  }
+  .domain-link {
+    font-size: 1.5rem;
+    font-weight: bold;
+    word-break: break-all;
+  }
+  .form-control:focus {
+    border-color: #FF6B00;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 0, 0.25);
+  }
+  .back-link {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+  .back-link:hover {
+    color: #FF6B00;
+  }
+</style>
+
+<main>
+  <div class="container mt-4">
+    <a href="{% url 'website-list' %}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Directory
+    </a>
+
+    <div class="row mt-3">
+      <!-- Left Ad -->
+      <div class="col-md-2 d-none d-md-block">
+        <div class="text-center text-muted small py-4">Advertisement</div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-md-8">
+
+        <!-- Hero Section -->
+        <div class="row border rounded p-3 mb-4 bg-white">
+          <div class="col-md-5 mb-3 mb-md-0">
+            <div class="screenshot-container">
+              {% if directory.image_url %}
+                <img src="/media/{{ directory.image_url }}" alt="{{ directory.domain }} screenshot">
+              {% else %}
+                <div class="screenshot-placeholder">
+                  <span><i class="fas fa-image mr-1"></i> No screenshot</span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-md-7">
+            <div class="mb-2">
+              <span class="category-badge">{{ directory.get_category_display }}</span>
+            </div>
+            <h1 class="h4 mt-2 mb-1">{{ directory.title|default:directory.domain }}</h1>
+            <p class="mb-2">
+              <a href="{{ directory.domain }}" target="_blank" rel="noopener noreferrer" class="domain-link">
+                {{ directory.domain }} <i class="fas fa-external-link-alt" style="font-size:1rem;"></i>
+              </a>
+            </p>
+            {% if directory.description %}
+              <p class="text-muted mb-3" style="font-size:0.92rem;">{{ directory.description }}</p>
+            {% endif %}
+
+            <!-- SEO Metrics -->
+            <div class="mb-2">
+              <span class="metric-badge">DA <span>{{ directory.da }}</span></span>
+              <span class="metric-badge">Moz Rank <span>{{ directory.moz_rank }}</span></span>
+              <span class="metric-badge">SEMrush <span>{{ directory.semrush_rank }}</span></span>
+              <span class="metric-badge">FB Likes <span>{{ directory.facebook_like|floatformat:0 }}</span></span>
+              <span class="metric-badge">Worth <span>${{ directory.worth|floatformat:0 }}</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="section-divider"></div>
+        <h2 class="h5 mb-3">
+          <i class="fas fa-comments mr-1" style="color:#FF6B00;"></i>
+          Comments ({{ comments|length }})
+        </h2>
+
+        {% if comments %}
+          {% for comment in comments %}
+            <div class="comment-card d-flex">
+              <div class="comment-avatar mr-3">
+                {{ comment.name|slice:":1"|upper }}
+              </div>
+              <div>
+                <div class="d-flex align-items-baseline">
+                  <strong class="mr-2">{{ comment.name }}</strong>
+                  <span class="comment-meta">{{ comment.created_at|date:"M d, Y" }}</span>
+                </div>
+                <p class="mb-0 mt-1">{{ comment.content }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted">No comments yet. Be the first to leave one!</p>
+        {% endif %}
+
+        <!-- Comment Form -->
+        <div class="section-divider"></div>
+        <h2 class="h5 mb-3">
+          <i class="fas fa-pencil-alt mr-1" style="color:#FF6B00;"></i>
+          Leave a Comment
+        </h2>
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="id_name">Name <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              name="name"
+              id="id_name"
+              class="form-control{% if form.name.errors %} is-invalid{% endif %}"
+              value="{{ form.name.value|default:'' }}"
+              placeholder="Your name"
+              required
+            >
+            {% if form.name.errors %}
+              <div class="invalid-feedback">{{ form.name.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="id_email">Email <span class="text-muted small">(optional)</span></label>
+            <input
+              type="email"
+              name="email"
+              id="id_email"
+              class="form-control{% if form.email.errors %} is-invalid{% endif %}"
+              value="{{ form.email.value|default:'' }}"
+              placeholder="your@email.com"
+            >
+            {% if form.email.errors %}
+              <div class="invalid-feedback">{{ form.email.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="id_content">Comment <span class="text-danger">*</span></label>
+            <textarea
+              name="content"
+              id="id_content"
+              class="form-control{% if form.content.errors %} is-invalid{% endif %}"
+              rows="4"
+              placeholder="Share your thoughts about this website..."
+              required
+            >{{ form.content.value|default:'' }}</textarea>
+            {% if form.content.errors %}
+              <div class="invalid-feedback">{{ form.content.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <button type="submit" class="btn-post-comment">
+            <i class="fas fa-paper-plane mr-1"></i> Post Comment
+          </button>
+        </form>
+
+        <div class="mb-5"></div>
+      </div>
+
+      <!-- Right Ad -->
+      <div class="col-md-2 d-none d-md-block">
+        <div class="text-center text-muted small py-4">Advertisement</div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

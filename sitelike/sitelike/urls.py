@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.urls import path
 from django.contrib import admin
+from django.views.generic import RedirectView
 from directory.views import DirectoryListView, DirectoryDetailView, DirectoryCreateView, DirectoryUpdateView, DirectoryDeleteView, TopDirectoryListView
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/websites/', permanent=False), name='home'),
     path('admin/', admin.site.urls),
     path('websites/', DirectoryListView.as_view(), name='website-list'),
     path('websites/rank-wise-list/', TopDirectoryListView.as_view(), name='top-website-list'),
