@@ -24,6 +24,7 @@
                                     <span class="badge badge-dark">{{ directory.category }}</span>
                                     <p class="mb-0"><b>{{ directory.title|truncatechars:50 }}</b></p>
                                     <p>{{ directory.description|truncatechars:270 }}</p>
+<<<<<<< Updated upstream
                                     <button type="button"  class="custom-button btn btn-warning">
                                     DA:  <span class="badge badge-light">{{ directory.da }}</span>
                                     </button>
@@ -38,6 +39,22 @@
                                     </button>
                                      <button type="button"  class="custom-button btn btn-warning mt-2">
                                     Website Value:  <span class="badge badge-light">${{ directory.facebook_like|floatformat:0 }}</span>
+=======
+                                    <button type="button" class="custom-button btn" style="border: 2px solid orange; background: transparent; color: orange;">
+                                    DA: <span class="badge" style="background: transparent; color: orange;">{{ directory.da }}</span>
+                                    </button>
+                                    <button type="button" class="custom-button btn" style="border: 2px solid orange; background: transparent; color: orange;">
+                                    Moz Rank: <span class="badge" style="background: transparent; color: orange;">{{ directory.moz_rank }}</span>
+                                    </button>
+                                    <button type="button" class="custom-button btn" style="border: 2px solid orange; background: transparent; color: orange;">
+                                    SEMrush Rank: <span class="badge" style="background: transparent; color: orange;">{{ directory.semrush_rank }}</span>
+                                    </button>
+                                    <button type="button" class="custom-button btn mt-2" style="border: 2px solid orange; background: transparent; color: orange;">
+                                    Instagram Followers: <span class="badge" style="background: transparent; color: orange;">{{ directory.facebook_like|floatformat:0 }}</span>
+                                    </button>
+                                    <button type="button" class="custom-button btn mt-2" style="border: 2px solid orange; background: transparent; color: orange;">
+                                    Website Value: <span class="badge" style="background: transparent; color: orange;">${{ directory.facebook_like|floatformat:0 }}</span>
+>>>>>>> Stashed changes
                                     </button>
                                     <div class="mt-2">
                                         <a href="{% url 'website-detail' directory.pk %}" class="btn btn-sm btn-outline-secondary">
