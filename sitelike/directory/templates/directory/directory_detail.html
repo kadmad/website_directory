@@ -2,22 +2,47 @@
 {% block content %}
 <style>
   .metric-badge {
-    display: inline-block;
-    background-color: transparent;
-    border: 2px solid white;
-    border-radius: 4px;
-    padding: 6px 12px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 50px;
+    padding: 5px 14px 5px 6px;
     font-size: 0.85rem;
     font-weight: 600;
     margin: 4px 4px 4px 0;
     color: white;
+    z-index: 0;
+    background: rgba(10, 10, 30, 0.7);
   }
-  .metric-badge span {
-    background-color: transparent;
+  .metric-badge::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 52px;
+    background: linear-gradient(90deg, #ff0080, #ff8c00, #ffed00, #00ff80, #00b4ff, #a855f7, #ff0080);
+    z-index: -1;
+  }
+  .metric-badge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    background: rgba(10, 10, 30, 0.75);
+    z-index: -1;
+  }
+  .metric-badge .kpi-value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #c77dff);
     color: white;
-    border-radius: 3px;
-    padding: 2px 6px;
-    margin-left: 4px;
+    font-weight: bold;
+    font-size: 0.72rem;
+    flex-shrink: 0;
   }
   .comment-avatar {
     width: 42px;
@@ -152,11 +177,11 @@
 
             <!-- SEO Metrics -->
             <div class="mb-2">
-              <span class="metric-badge">DA <span>{{ directory.da }}</span></span>
-              <span class="metric-badge">Moz Rank <span>{{ directory.moz_rank }}</span></span>
-              <span class="metric-badge">SEMrush <span>{{ directory.semrush_rank }}</span></span>
-              <span class="metric-badge">FB Likes <span>{{ directory.facebook_like|floatformat:0 }}</span></span>
-              <span class="metric-badge">Worth <span>${{ directory.worth|floatformat:0 }}</span></span>
+              <span class="metric-badge"><span class="kpi-value">{{ directory.da }}</span> DA</span>
+              <span class="metric-badge"><span class="kpi-value">{{ directory.moz_rank }}</span> Moz</span>
+              <span class="metric-badge"><span class="kpi-value">{{ directory.semrush_rank }}</span> SEMrush</span>
+              <span class="metric-badge"><span class="kpi-value">{{ directory.facebook_like|floatformat:0 }}</span> FB</span>
+              <span class="metric-badge"><span class="kpi-value">${{ directory.worth|floatformat:0 }}</span> Worth</span>
             </div>
           </div>
         </div>
